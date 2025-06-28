@@ -16,7 +16,7 @@ public class ProduitDAO {
             stmt.setString(1, p.getNom());
             stmt.setDouble(2, p.getPrix());
             stmt.setInt(3, p.getQuantite());
-            stmt.setInt(4, p.getIdFournisseur());
+            stmt.setInt(4, p.getFournisseurId());
             stmt.executeUpdate();
         }
     }

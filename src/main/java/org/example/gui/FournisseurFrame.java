@@ -16,35 +16,46 @@ public class FournisseurFrame {
     public JPanel getContentPanel() {
         dao = new FournisseurDAO();
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        nomField = new JTextField(15);
-        emailField = new JTextField(15);
-        telephoneField = new JTextField(15);
+        // Top form
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JButton addButton = new JButton("Ajouter");
-        JButton listButton = new JButton("Afficher");
+        nomField = new JTextField(10);
+        emailField = new JTextField(10);
+        telephoneField = new JTextField(10);
 
+        formPanel.add(new JLabel("Nom:"));
+        formPanel.add(nomField);
+        formPanel.add(new JLabel("Email:"));
+        formPanel.add(emailField);
+        formPanel.add(new JLabel("Téléphone:"));
+        formPanel.add(telephoneField);
+
+        // Output area
         outputArea = new JTextArea(10, 45);
         outputArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(outputArea);
 
-        // Add components to panel
-        panel.add(new JLabel("Nom:"));
-        panel.add(nomField);
-        panel.add(new JLabel("Email:"));
-        panel.add(emailField);
-        panel.add(new JLabel("Téléphone:"));
-        panel.add(telephoneField);
-        panel.add(addButton);
-        panel.add(listButton);
-        panel.add(new JScrollPane(outputArea));
+        // Buttons
+        JButton addButton = new JButton("Ajouter");
+        JButton listButton = new JButton("Afficher");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(addButton);
+        buttonPanel.add(listButton);
+
+        // Assemble
+        mainPanel.add(formPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Actions
         addButton.addActionListener((ActionEvent e) -> ajouterFournisseur());
         listButton.addActionListener((ActionEvent e) -> afficherFournisseurs());
 
-        return panel;
+        return mainPanel;
     }
 
     private void ajouterFournisseur() {
@@ -64,7 +75,6 @@ public class FournisseurFrame {
             nomField.setText("");
             emailField.setText("");
             telephoneField.setText("");
-
         } catch (Exception e) {
             e.printStackTrace();
             outputArea.setText("Erreur: " + e.getMessage());

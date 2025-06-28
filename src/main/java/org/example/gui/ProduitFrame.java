@@ -16,42 +16,64 @@ public class ProduitFrame {
     public JPanel getContentPanel() {
         dao = new ProduitDAO();
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout());
 
-        nomField = new JTextField(15);
+        // Top Form
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        nomField = new JTextField(10);
         prixField = new JTextField(10);
         quantiteField = new JTextField(10);
-        fournisseurIdField = new JTextField(5);
-        JButton addButton = new JButton("Ajouter");
-        JButton listButton = new JButton("Afficher");
+        fournisseurIdField = new JTextField(10);
+
+        formPanel.add(new JLabel("Nom:"));
+        formPanel.add(nomField);
+        formPanel.add(new JLabel("Prix:"));
+        formPanel.add(prixField);
+        formPanel.add(new JLabel("Quantité:"));
+        formPanel.add(quantiteField);
+        formPanel.add(new JLabel("ID Fournisseur:"));
+        formPanel.add(fournisseurIdField);
+
+        // Output
         outputArea = new JTextArea(10, 45);
         outputArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(outputArea);
 
-        panel.add(new JLabel("Nom:")); panel.add(nomField);
-        panel.add(new JLabel("Prix:")); panel.add(prixField);
-        panel.add(new JLabel("Quantité:")); panel.add(quantiteField);
-        panel.add(new JLabel("ID Fournisseur:")); panel.add(fournisseurIdField);
-        panel.add(addButton);
-        panel.add(listButton);
-        panel.add(new JScrollPane(outputArea));
+        // Bottom Buttons
+        JButton addButton = new JButton("Ajouter");
+        JButton listButton = new JButton("Afficher");
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(addButton);
+        buttonPanel.add(listButton);
 
+        // Assemble Layout
+        mainPanel.add(formPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Actions
         addButton.addActionListener((ActionEvent e) -> ajouterProduit());
         listButton.addActionListener((ActionEvent e) -> afficherProduits());
 
-        return panel;
+        return mainPanel;
     }
 
     private void ajouterProduit() {
         try {
-            Produit p = new Produit(
-                    nomField.getText(),
-                    Double.parseDouble(prixField.getText()),
-                    Integer.parseInt(quantiteField.getText()),
-                    Integer.parseInt(fournisseurIdField.getText())
-            );
+            String nom = nomField.getText().trim();
+            double prix = Double.parseDouble(prixField.getText().trim());
+            int quantite = Integer.parseInt(quantiteField.getText().trim());
+            int fournisseurId = Integer.parseInt(fournisseurIdField.getText().trim());
+
+            Produit p = new Produit(nom, prix, quantite, fournisseurId);
             dao.ajouterProduit(p);
             outputArea.setText("Produit ajouté avec succès !");
+            nomField.setText("");
+            prixField.setText("");
+            quantiteField.setText("");
+            fournisseurIdField.setText("");
         } catch (Exception e) {
             e.printStackTrace();
             outputArea.setText("Erreur: " + e.getMessage());
@@ -60,15 +82,11 @@ public class ProduitFrame {
 
     private void afficherProduits() {
         try {
-            List<Produit> liste = dao.listerProduits();
+            List<Produit> produits = dao.listerProduits();
             outputArea.setText("");
-            for (Produit p : liste) {
-                outputArea.append(
-                        p.getId() + " - " + p.getNom() +
-                                " - Prix: " + p.getPrix() +
-                                " - Qté: " + p.getQuantite() +
-                                " - Fournisseur ID: " + p.getIdFournisseur() + "\n"
-                );
+            for (Produit p : produits) {
+                outputArea.append(p.getId() + " - " + p.getNom() + " - " + p.getPrix() +
+                        " - " + p.getQuantite() + " - Fournisseur ID: " + p.getFournisseurId() + "\n");
             }
         } catch (Exception e) {
             e.printStackTrace();
