@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ProduitFrame {
     private JTextField nomField, prixField, quantiteField, fournisseurIdField;
+    private JTextField deleteIdField;
     private JTextArea outputArea;
     private ProduitDAO dao;
 
@@ -41,21 +42,38 @@ public class ProduitFrame {
         outputArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(outputArea);
 
-        // Bottom Buttons
+        // Buttons
         JButton addButton = new JButton("Ajouter Produit");
         JButton listButton = new JButton("Afficher Tous");
+
+        // Delete section
+        JPanel deletePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        deleteIdField = new JTextField(5);
+        JButton deleteButton = new JButton("Supprimer Produit");
+
+        deletePanel.add(new JLabel("ID à supprimer:"));
+        deletePanel.add(deleteIdField);
+        deletePanel.add(deleteButton);
+
+        // Button panel (add + list)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton);
         buttonPanel.add(listButton);
 
-        // Assemble Layout
+        // Assemble bottom area
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(buttonPanel, BorderLayout.NORTH);
+        bottomPanel.add(deletePanel, BorderLayout.SOUTH);
+
+        // Add to main layout
         mainPanel.add(formPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         // Actions
         addButton.addActionListener((ActionEvent e) -> ajouterProduit());
         listButton.addActionListener((ActionEvent e) -> afficherProduits());
+        deleteButton.addActionListener((ActionEvent e) -> supprimerProduit());
 
         return mainPanel;
     }
@@ -91,6 +109,18 @@ public class ProduitFrame {
         } catch (Exception e) {
             e.printStackTrace();
             outputArea.setText("Erreur: " + e.getMessage());
+        }
+    }
+
+    private void supprimerProduit() {
+        try {
+            int id = Integer.parseInt(deleteIdField.getText().trim());
+            dao.supprimerProduit(id);
+            outputArea.setText("Produit supprimé avec succès !");
+            deleteIdField.setText("");
+        } catch (Exception e) {
+            e.printStackTrace();
+            outputArea.setText("Erreur lors de la suppression: " + e.getMessage());
         }
     }
 }

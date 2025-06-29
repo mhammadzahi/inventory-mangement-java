@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 public class DBConnection {
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection();
+            return DriverManager.getConnection("");
         }
         catch (Exception e) {
             e.printStackTrace();

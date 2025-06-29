@@ -10,6 +10,7 @@ import java.util.List;
 
 public class FournisseurFrame {
     private JTextField nomField, emailField, telephoneField;
+    private JTextField deleteIdField;
     private JTextArea outputArea;
     private FournisseurDAO dao;
 
@@ -19,9 +20,7 @@ public class FournisseurFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         // Top form
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
+        JPanel formPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         nomField = new JTextField(10);
         emailField = new JTextField(10);
         telephoneField = new JTextField(10);
@@ -41,19 +40,34 @@ public class FournisseurFrame {
         // Buttons
         JButton addButton = new JButton("Ajouter Fournisseur");
         JButton listButton = new JButton("Afficher Tous");
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton);
         buttonPanel.add(listButton);
 
-        // Assemble
+        // Delete section
+        JPanel deletePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        deleteIdField = new JTextField(5);
+        JButton deleteButton = new JButton("Supprimer Fournisseur");
+
+        deletePanel.add(new JLabel("ID à supprimer:"));
+        deletePanel.add(deleteIdField);
+        deletePanel.add(deleteButton);
+
+        // Combine buttons and delete into one bottom panel
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(buttonPanel, BorderLayout.NORTH);
+        bottomPanel.add(deletePanel, BorderLayout.SOUTH);
+
+        // Assemble main layout
         mainPanel.add(formPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         // Actions
         addButton.addActionListener((ActionEvent e) -> ajouterFournisseur());
         listButton.addActionListener((ActionEvent e) -> afficherFournisseurs());
+        deleteButton.addActionListener((ActionEvent e) -> supprimerFournisseur());
 
         return mainPanel;
     }
@@ -93,4 +107,32 @@ public class FournisseurFrame {
             outputArea.setText("Erreur: " + e.getMessage());
         }
     }
+
+    private void supprimerFournisseur() {
+        try {
+            int id = Integer.parseInt(deleteIdField.getText().trim());
+            dao.supprimerFournisseur(id);
+            outputArea.setText("Fournisseur supprimé avec succès !");
+            deleteIdField.setText("");
+        } catch (Exception e) {
+            e.printStackTrace();
+            String message = e.getMessage();
+
+            if (message.contains("a foreign key constraint fails")) {
+                JOptionPane.showMessageDialog(null,
+                        "Impossible de supprimer ce fournisseur car il est lié à des produits.\n" +
+                                "Veuillez d'abord supprimer ou modifier les produits associés.",
+                        "Erreur de suppression",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "Erreur lors de la suppression: " + message,
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+            outputArea.setText("Erreur lors de la suppression: " + message);
+        }
+    }
+
 }
