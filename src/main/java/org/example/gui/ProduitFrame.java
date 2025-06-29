@@ -42,8 +42,8 @@ public class ProduitFrame {
         JScrollPane scrollPane = new JScrollPane(outputArea);
 
         // Bottom Buttons
-        JButton addButton = new JButton("Ajouter");
-        JButton listButton = new JButton("Afficher");
+        JButton addButton = new JButton("Ajouter Produit");
+        JButton listButton = new JButton("Afficher Tous");
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton);
         buttonPanel.add(listButton);

@@ -39,8 +39,8 @@ public class FournisseurFrame {
         JScrollPane scrollPane = new JScrollPane(outputArea);
 
         // Buttons
-        JButton addButton = new JButton("Ajouter");
-        JButton listButton = new JButton("Afficher");
+        JButton addButton = new JButton("Ajouter Fournisseur");
+        JButton listButton = new JButton("Afficher Tous");
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton);
